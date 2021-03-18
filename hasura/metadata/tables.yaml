@@ -1,9 +1,84 @@
 - table:
     schema: public
     name: common_group
+  array_relationships:
+  - name: common_memberships
+    using:
+      foreign_key_constraint_on:
+        column: group_id
+        table:
+          schema: public
+          name: common_membership
 - table:
     schema: public
     name: common_membership
+  object_relationships:
+  - name: common_group
+    using:
+      foreign_key_constraint_on: group_id
+  - name: common_person
+    using:
+      foreign_key_constraint_on: inviter_id
+  - name: commonPersonByPersonId
+    using:
+      foreign_key_constraint_on: person_id
 - table:
     schema: public
     name: common_person
+  array_relationships:
+  - name: common_memberships
+    using:
+      foreign_key_constraint_on:
+        column: inviter_id
+        table:
+          schema: public
+          name: common_membership
+  - name: commonMembershipsByPersonId
+    using:
+      foreign_key_constraint_on:
+        column: person_id
+        table:
+          schema: public
+          name: common_membership
+- table:
+    schema: public
+    name: group
+  array_relationships:
+  - name: memberships
+    using:
+      foreign_key_constraint_on:
+        column: group_id
+        table:
+          schema: public
+          name: membership
+- table:
+    schema: public
+    name: membership
+  object_relationships:
+  - name: group
+    using:
+      foreign_key_constraint_on: group_id
+  - name: person
+    using:
+      foreign_key_constraint_on: inviter_id
+  - name: personByPersonId
+    using:
+      foreign_key_constraint_on: person_id
+- table:
+    schema: public
+    name: person
+  array_relationships:
+  - name: memberships
+    using:
+      foreign_key_constraint_on:
+        column: inviter_id
+        table:
+          schema: public
+          name: membership
+  - name: membershipsByPersonId
+    using:
+      foreign_key_constraint_on:
+        column: person_id
+        table:
+          schema: public
+          name: membership
