@@ -1,0 +1,41 @@
+version: '3'
+
+services:
+  postgres:
+    image: postgres
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 1s
+      timeout: 10s
+      retries: 60
+  django:
+    build:
+      context: .
+      target: builder
+    command: ./bin/docker-entrypoint.sh
+    restart: always
+    volumes:
+      - ./django_project:/app
+    ports:
+      - "8000:8000"
+      - "6006:6006"
+    depends_on:
+      - postgres
+  graphql-engine:
+    image: hasura/graphql-engine:v1.3.3.cli-migrations-v2
+    ports:
+    - "8080:8080"
+    depends_on:
+    - "postgres"
+    restart: always
+    environment:
+      HASURA_GRAPHQL_DATABASE_URL: postgres://postgres:@postgres:5432/postgres
+      HASURA_GRAPHQL_ENABLE_CONSOLE: "true"
+      HASURA_GRAPHQL_ADMIN_SECRET: myadminsecretkey
+      HASURA_GRAPHQL_JWT_SECRET: '{"type":"HS512","key": "ahgheiSha1kiex2XaeGugh9sah5fei1aeVeeza3aeWahshahz7Eib6doohu7voob"}'
+      HASURA_GRAPHQL_DEV_MODE: "true"
+      HASURA_GRAPHQL_ENABLED_LOG_TYPES: startup, http-log, webhook-log, websocket-log, query-log
+      HASURA_GRAPHQL_MIGRATIONS_DIR: /app/migrations
+      HASURA_GRAPHQL_METADATA_DIR: /app/metadata
+    volumes:
+      - ./hasura/:/app/

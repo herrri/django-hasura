@@ -1,0 +1,9 @@
+- table:
+    schema: public
+    name: common_group
+- table:
+    schema: public
+    name: common_membership
+- table:
+    schema: public
+    name: common_person
