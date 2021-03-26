@@ -1,6 +1,20 @@
 from django.contrib import admin
-from .models import Group, Membership, Person
+from modeltranslation.admin import TranslationAdmin
+from .models import (
+    Group as GroupModel,
+    Membership as MembershipModel,
+    Person as PersonModel,
+)
 
-admin.site.register(Group)
-admin.site.register(Membership)
-admin.site.register(Person)
+
+class PersonAdmin(TranslationAdmin):
+    group_fieldsets = True
+
+
+class GroupAdmin(TranslationAdmin):
+    group_fieldsets = True
+
+
+admin.site.register(PersonModel, PersonAdmin)
+admin.site.register(GroupModel, GroupAdmin)
+admin.site.register(MembershipModel)
